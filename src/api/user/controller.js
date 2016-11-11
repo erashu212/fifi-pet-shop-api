@@ -12,15 +12,26 @@ module.exports = class UserController {
   
   static createUser(req, res) { 
     UserDAO
-      .getAll()
+      .createUser(req.body)
       .then(users => res.status(200).json(users))
       .catch(error => res.status(400).json(error));
   }
   
   static login(req, res) { 
     UserDAO
-      .getAll()
-      .then(users => res.status(200).json(users))
+      .login(req.body)
+      .then(user => { 
+        req.session.user = user;
+        req.session.save();
+        res.status(200).json(user)
+      })
       .catch(error => res.status(400).json(error));
+  }
+  
+  static logout(req, res) { 
+    req.session.destroy((err) => { 
+      err ? res.status(500).json(err) 
+          : res.status(200).json('Logged out successfully.')
+    });
   }
 }

@@ -1,5 +1,7 @@
 "use strict";
 
+const mongoose = require('mongoose');
+
 const user = {
   username: {
     type: String,
@@ -27,4 +29,4 @@ const user = {
   }
 }
 
-module.exports = require('mongoose').Schema(user);
+module.exports = new mongoose.Schema(user);
