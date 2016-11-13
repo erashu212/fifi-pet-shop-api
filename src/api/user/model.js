@@ -3,6 +3,7 @@
 const mongoose = require('mongoose');
 
 const user = {
+  name: String,
   username: {
     type: String,
     required: [ true, 'Username can not be empty' ]
