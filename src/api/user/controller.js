@@ -2,6 +2,8 @@
 
 const UserDAO = require('./dao');
 
+const _ = require('lodash');
+
 module.exports = class UserController { 
   static getAll(req, res) { 
     UserDAO
@@ -21,9 +23,9 @@ module.exports = class UserController {
     UserDAO
       .login(req.body)
       .then(user => { 
-        req.session.user = user;
-        req.session.save();
-        res.status(200).json(user)
+        req.session.user = _.isArray(user) ? user[0] : user;
+        
+        return res.status(200).json(user)
       })
       .catch(error => res.status(400).json(error));
   }

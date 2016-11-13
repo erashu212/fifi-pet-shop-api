@@ -16,7 +16,7 @@ module.exports = class Routes {
 
     /* middleware to avail product api to admin only */
       app
-       .post('/api/products', AuthController.isAuthenticated)
+       .post('/api/products', AuthController.isAdmin)
        .put('/api/products/:id', AuthController.isAdmin)
        .delete('/api/products/:id', AuthController.isAdmin);
  
