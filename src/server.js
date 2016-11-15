@@ -11,16 +11,21 @@ const DBConfig = require('./config/db.conf');
 const ErrorHandler = require('./config/error-handler.conf');
 const Routes = require('./routes/index');
 
+const io = require('socket.io');
+
 const app = express();
+
+let server = http.createServer(app)
+    .listen(PORT, () => {
+        console.log(`up and running @: ${os.hostname()} on port: ${PORT}`);
+        console.log(`enviroment: ${process.env.NODE_ENV}`);
+    });
+
+let ios = io.listen(server);  
+require('./config/socket')(ios);
 
 RoutesConfig.init(app);
 DBConfig.init();
 ErrorHandler.init(app);
 
-Routes.init(app, express.Router());
-
-http.createServer(app)
-     .listen(PORT, () => {
-       console.log(`up and running @: ${os.hostname()} on port: ${PORT}`);
-       console.log(`enviroment: ${process.env.NODE_ENV}`);
-     });
+Routes.init(app, express.Router(), ios);
