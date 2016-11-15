@@ -2,7 +2,9 @@
 
 const ProductDAO = require('./dao');
 
-const cache = require('../../commons/cache/cache');
+const CacheManager = require('../../commons/cache/cache');
+
+const socketEmitter =  require('../../config/socket').emitter;
 
 const _ = require('lodash');
 
@@ -10,15 +12,18 @@ module.exports = class ProductController {
     static loadAll() {
         ProductDAO.getAll()
             .then(products => {
-                cache.CacheManager.save('products', products);
+                CacheManager.save('products', products);
             })
     }
 
     static getAll(req, res) {
         let {start, end} = req.query;
 
-        cache.CacheManager.get('products')
+        CacheManager.get('products')
             .then(products => {
+                
+                socketEmitter.emit('product:read');
+
                 if (_.isArray(products) && products.length > 0) { 
                     products = products[ 0 ];
                 }
@@ -33,7 +38,7 @@ module.exports = class ProductController {
     }
 
     static getProductById(req, res) {
-        cache.CacheManager.get('products')
+        CacheManager.get('products')
             .then(products => {
                 // if cache manager is empty then read and fill cache
                 if (_.isEmpty(products))
@@ -49,7 +54,7 @@ module.exports = class ProductController {
         ProductDAO
             .createProduct(req.body)
             .then(product => {
-                cache.CacheEmitter.emit('product:added', product);
+                CacheManager.save('products', product);
 
                 return res.status(200).json(product);
             })
@@ -60,7 +65,7 @@ module.exports = class ProductController {
         ProductDAO
             .updateProduct(req.params.id, req.body)
             .then(product => {
-                cache.CacheEmitter.emit('product:added', product);
+                CacheManager.save('products', product);
 
                 return res.status(200).json(product);
             })
@@ -71,7 +76,7 @@ module.exports = class ProductController {
         ProductDAO
             .deleteProduct(req.params.id)
             .then(product => {
-                cache.CacheEmitter.emit('product:deleted', product);
+                CacheManager.delete('products', product);
 
                 return res.status(200).json(product);
             })

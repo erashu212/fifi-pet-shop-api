@@ -9,7 +9,7 @@ const _ = require('lodash');
 
 const cache = new NodeChache();
 
-class CacheManager {
+module.exports = class CacheManager {
   static save(key = 'products', dataSet) {
     return new Promise((resolve, reject) => {
       if (_.isNull(key) || _.isNull(dataSet))
@@ -64,18 +64,4 @@ class CacheManager {
       })
     });
   }
-}
-
-cacheEmitter.on('product:added', (data) => {
-  CacheManager.save('products', data);
-});
-
-cacheEmitter.on('product:deleted', (key) => {
-
-  CacheManager.delete(key);
-});
-
-module.exports = {
-  CacheEmitter: cacheEmitter,
-  CacheManager
 }
