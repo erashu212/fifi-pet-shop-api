@@ -1,67 +1,68 @@
 "use strict";
 
 const Promise = require('bluebird');
-const NodeChache = require('node-cache');
 const EventEmitter = require('events').EventEmitter;
 const cacheEmitter = new EventEmitter();
 
 const _ = require('lodash');
 
-const cache = new NodeChache();
+const cache = require('memory-cache');
 
 module.exports = class CacheManager {
-  static save(key = 'products', dataSet) {
-    return new Promise((resolve, reject) => {
-      if (_.isNull(key) || _.isNull(dataSet))
-        return reject(
-          new TypeError('Key and object to be saved should not be empty'));
+    static save(key = 'products', dataSet, id = null) {
+        return new Promise((resolve, reject) => {
+            if (_.isNull(key) || _.isNull(dataSet))
+                return reject(
+                    new TypeError('Key and object to be saved should not be empty'));
 
-      // check cache is empty?
-      cache.get(key, (err, success) => {
-        let data = success || [];
+            // check cache is empty?
+            let data = cache.get(key) || [];
 
-        data.push(dataSet);
+            if (_.isArray(data)) {
+                if (_.isNull(data[0])) {
+                    let index = data[0].findIndex(x =>
+                        x._id == id);
 
-        cache.set(key, data, (err, success) => {
-          err ? reject(err)
-            : resolve(success);
+                    if (index > - 1)
+                        data[0][index] = dataSet;
+                } else { 
+                    data.push(dataSet);
+                }
+                cache.put(key, data);
+
+                return resolve(true)
+            }
+            return resolve(false);
         });
-      });
-    });
-  }
+    }
 
-  static get(key = 'products') {
-    return new Promise((resolve, reject) => {
-      if (!_.isString(key))
-        return reject(new TypeError('Key must be string'));
+    static get(key = 'products') {
+        return new Promise((resolve, reject) => {
+            if (!_.isString(key))
+                return reject(new TypeError('Key must be string'));
 
 
-      return cache.get(key, (err, success) => {
-        err ? reject(err)
-          : resolve(success);
-      })
-    })
-  }
-
-  static delete(key = 'products', dataToDelete) {
-    return new Promise((resolve, reject) => {
-      if (!_.isString(key))
-        return reject(new TypeError('Key must be string'));
-
-      // check cache is empty?
-      cache.get(key, (err, success) => {
-        let data = success || [];
-
-        let index = data.findIndex(x =>
-          _.isObject(x) && _.isEqual(x, dataToDelete));
-
-        data.splice(index);
-
-        return cache.set(key, data, (err, success) => {
-          err ? reject(err)
-            : resolve(success);
+            return resolve(cache.get(key));
         })
-      })
-    });
-  }
+    }
+
+    static delete(key = 'products', id) {
+        return new Promise((resolve, reject) => {
+            if (!_.isString(key))
+                return reject(new TypeError('Key must be string'));
+
+            // check cache is empty?
+            let data = cache.get(key);
+
+            if (_.isArray(data) && data.length > 0) {
+                let index = data[0].findIndex(x => x._id == id);
+
+                data[0].splice(index, 1);
+                cache.put(key, data);
+
+                return resolve(true)
+            }
+            return resolve(false)
+        });
+    }
 }

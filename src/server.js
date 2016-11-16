@@ -20,7 +20,7 @@ let server = http.createServer(app)
         console.log(`up and running @: ${os.hostname()} on port: ${PORT}`);
         console.log(`enviroment: ${process.env.NODE_ENV}`);
     });
-  
+
 let ios = io.listen(server);
 
 require('./config/socket').socket(ios);
@@ -30,3 +30,8 @@ DBConfig.init();
 ErrorHandler.init(app);
 
 Routes.init(app, express.Router());
+
+process.on('uncaughtException', function (err) {
+    // handle the error safely
+    console.log(err)
+})

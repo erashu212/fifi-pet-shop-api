@@ -7,7 +7,11 @@ module.exports = class UserRoutes {
     router
       .route('/api/users')
       .get(UserController.getAll)
-      .post(UserController.createUser);
+        .post(UserController.createUser);
+      
+   router
+      .route('/api/user')
+      .get(UserController.get)  
     
     router
       .route('/api/login')

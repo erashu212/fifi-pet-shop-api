@@ -12,6 +12,7 @@ const cors = require('cors');
 module.exports = class RouteConfig {
     static init(application) {
 
+        application.use(bodyParser.urlencoded({ extended: true }));
         application.use(bodyParser.json());
 
         application.use(cookieParser());

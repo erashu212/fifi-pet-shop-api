@@ -4,7 +4,7 @@ const ProductDAO = require('./dao');
 
 const CacheManager = require('../../commons/cache/cache');
 
-const socketEmitter =  require('../../config/socket').emitter;
+const socketEmitter = require('../../config/socket').emitter;
 
 const _ = require('lodash');
 
@@ -21,20 +21,39 @@ module.exports = class ProductController {
 
         CacheManager.get('products')
             .then(products => {
-                
                 socketEmitter.emit('product:read');
 
-                if (_.isArray(products) && products.length > 0) { 
-                    products = products[ 0 ];
+                if (_.isArray(products) && products.length > 0) {
+                    products = products[0];
                 }
+
+                let productLength = products.length;
 
                 if (!(_.isNaN(start) && _.isNaN(end))) {
-                    return res.status(200).json(products.slice(start, end))
+                    return res.status(200).json({
+                        status: !!products,
+                        data: {
+                            totalItems: productLength,
+                            products: products.slice(start, end)
+                        },
+                        message: ''
+                    })
                 }
 
-                return res.status(200).json(products);
+                return res.status(200).json({
+                    status: !!products,
+                    data: {
+                        totalItems: productLength,
+                        products: products
+                    },
+                    message: ''
+                });
             })
-            .catch(error => res.status(400).json(error));
+            .catch(error => res.status(400).json({
+                status: false,
+                data: null,
+                message: error
+            }));
     }
 
     static getProductById(req, res) {
@@ -42,44 +61,83 @@ module.exports = class ProductController {
             .then(products => {
                 // if cache manager is empty then read and fill cache
                 if (_.isEmpty(products))
-                    return ProductDAO.getProductById(req.params.id);
+                    products = ProductDAO.getProductById(req.params.id);
+
+                if (_.isArray(products) && products.length > 0) {
+                    products = products[0];
+                }
 
                 return _.find(products, (p) => p._id == req.params.id);
             })
-            .then(product => res.status(200).json(product))
-            .catch(error => res.status(400).json(error));
+            .then(product => res.status(200).json({
+                status: !!product,
+                data: product,
+                message: ''
+            }))
+            .catch(error => res.status(400).json({
+                status: false,
+                data: error,
+                message: ''
+            }));
     }
 
     static createProduct(req, res) {
         ProductDAO
             .createProduct(req.body)
             .then(product => {
-                CacheManager.save('products', product);
-
-                return res.status(200).json(product);
+                CacheManager.save('products', req.body);
+                socketEmitter.emit('product:added', req.body);
+                
+                return res.status(200).json({
+                    status: !!product,
+                    data: product,
+                    message: ''
+                });
             })
-            .catch(error => res.status(400).json(error));
+            .catch(error => res.status(400).json({
+                status: false,
+                data: null,
+                message: err
+            }));
     }
 
     static updateProduct(req, res) {
         ProductDAO
             .updateProduct(req.params.id, req.body)
             .then(product => {
-                CacheManager.save('products', product);
+                CacheManager.save('products', req.body, req.params.id);
+                socketEmitter.emit('product:updated', req.body);
 
-                return res.status(200).json(product);
+                return res.status(200).json({
+                    status: !!product,
+                    data: req.params.id,
+                    message: ''
+                });
             })
-            .catch(error => res.status(400).json(error));
+            .catch(error => res.status(400).json({
+                status: false,
+                data: null,
+                message: null
+            }));
     }
 
     static deleteProduct(req, res) {
         ProductDAO
             .deleteProduct(req.params.id)
             .then(product => {
-                CacheManager.delete('products', product);
+                CacheManager.delete('products', req.params.id);
+                socketEmitter.emit('product:deleted', req.params.id);
 
-                return res.status(200).json(product);
+                return res.status(200).json({
+                    status: !!product,
+                    data: req.params.id,
+                    message: ''
+                });
             })
-            .catch(error => res.status(400).json(error));
+            .catch(error => res.status(400).json({
+                status: false,
+                data: null,
+                message: error
+            }));
     }
 }

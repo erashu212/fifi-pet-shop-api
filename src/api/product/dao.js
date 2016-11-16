@@ -45,7 +45,7 @@ productSchema.statics.createProduct = (product) => {
 
         _product.save((err, saved) => {
             err ? reject(err)
-                : resolve(saved);
+                : resolve(product);
         })
     })
 }
@@ -55,10 +55,18 @@ productSchema.statics.updateProduct = (id, product) => {
         if (!_.isObject(product))
             return reject(new TypeError('Product is not a valid object'));
 
-        Product.update({ _id: id }, req.body)
+        Product.update({ _id: id }, {
+            $set: {
+                'name': req.body.name,
+                'desc': req.body.desc,
+                'price.amount': req.body.price.amount,
+                'inventory.total': req.body.inventory.total,
+                'category.name': req.body.category.name
+            }
+        })
             .exec((err, updated) => {
                 err ? reject(err)
-                    : resolve(updated);
+                    : resolve(req.body);
             })
     })
 }
@@ -73,7 +81,7 @@ productSchema.statics.deleteProduct = (id) => {
             .findByIdAndRemove(id)
             .exec((err, deleted) => {
                 err ? reject(err)
-                    : resolve(deleted);
+                    : resolve(true);
             });
     });
 }

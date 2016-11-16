@@ -17,7 +17,7 @@ userSchema.statics.getAll = () => {
       .find(_query)
       .exec((err, users) => {
          err ? reject(err)
-             : resolve(users);  
+             : resolve(_.isArray(users) ? users[0] : users);  
        })
   })
 }
@@ -31,7 +31,7 @@ userSchema.statics.createUser = (user) => {
 
     _user.save((err, saved) => { 
       err ? reject(err)
-          : resolve(saved);
+          : resolve(_.isArray(saved) ? saved[0] : saved);
     })
   })
 }
@@ -45,7 +45,7 @@ userSchema.statics.deleteUser = (id) => {
       .findByIdAndRemove(id)
       .exec((err, deleted) => {
         err ? reject(err)
-            : resolve(deleted);
+            : resolve(_.isArray(deleted) ? deleted[0] : deleted);
       });
   });
 }
@@ -61,7 +61,7 @@ userSchema.statics.login = (user) => {
       })
       .exec((err, result) => {
         err ? reject(err)
-            : resolve(result);
+            : resolve(_.isArray(result) ? result[0] : result);
       });
   });
 }

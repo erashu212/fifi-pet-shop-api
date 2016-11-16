@@ -7,8 +7,8 @@ const CategorySchema = new mongoose.Schema({
     desc: String
 });
 
-const PriceShema = new mongoose.Schema({
-    price: Number,
+const PriceSchema = new mongoose.Schema({
+    amount: Number,
     discount: Number
 });
 
@@ -30,7 +30,7 @@ const product = {
         required: [ true, 'name can not be empty' ]
     },
     category: CategorySchema,
-    price: PriceShema,
+    price: PriceSchema,
     inventory: InventorySchema,
     isActive: Boolean,
     desc: String,

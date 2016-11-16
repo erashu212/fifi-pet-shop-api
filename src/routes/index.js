@@ -13,6 +13,7 @@ module.exports = class Routes {
       ProductRoutes.preInit();
     
       app.all('/api/users', AuthController.isAuthenticated);
+      
 
     /* middleware to avail product api to admin only */
       app
