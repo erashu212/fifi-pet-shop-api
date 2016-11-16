@@ -117,7 +117,7 @@ module.exports = class ProductController {
             .catch(error => res.status(400).json({
                 status: false,
                 data: null,
-                message: null
+                message: error
             }));
     }
 

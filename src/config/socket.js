@@ -4,12 +4,8 @@ const socketEmitter = new EventEmitter();
 module.exports = {
     emitter: socketEmitter,
     socket: (io) => {
-        io.on('connection', (client) => {
-
-            client.on('event', (data) => { });
-
-            client.on('disconnect', () => {
-            });
+        io.sockets.on('connection', (client) => {
+            console.log('Connected client', client);
         })
 
         socketEmitter.on('product:read', (product) => {

@@ -55,18 +55,10 @@ productSchema.statics.updateProduct = (id, product) => {
         if (!_.isObject(product))
             return reject(new TypeError('Product is not a valid object'));
 
-        Product.update({ _id: id }, {
-            $set: {
-                'name': req.body.name,
-                'desc': req.body.desc,
-                'price.amount': req.body.price.amount,
-                'inventory.total': req.body.inventory.total,
-                'category.name': req.body.category.name
-            }
-        })
-            .exec((err, updated) => {
+        Product.update(id, product,
+            (err, updated) => {
                 err ? reject(err)
-                    : resolve(req.body);
+                    : resolve(product);
             })
     })
 }

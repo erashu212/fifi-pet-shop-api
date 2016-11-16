@@ -19,7 +19,7 @@ module.exports = class CacheManager {
             let data = cache.get(key) || [];
 
             if (_.isArray(data)) {
-                if (_.isNull(data[0])) {
+                if (!_.isUndefined(data[0])) {
                     let index = data[0].findIndex(x =>
                         x._id == id);
 
