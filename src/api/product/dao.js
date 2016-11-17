@@ -58,7 +58,7 @@ productSchema.statics.updateProduct = (id, product) => {
         Product.update(id, product,
             (err, updated) => {
                 err ? reject(err)
-                    : resolve(product);
+                    : resolve(Object.assign({}, product, {_id: id}));
             })
     })
 }

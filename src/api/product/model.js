@@ -24,7 +24,6 @@ const InventorySchema = new mongoose.Schema({
 });
 
 const product = {
-    sku: String,
     name: {
         type: String,
         required: [ true, 'name can not be empty' ]

@@ -15,6 +15,10 @@ module.exports = class UserRoutes {
     
     router
       .route('/api/login')
-      .post(UserController.login);
+      .post(UserController.login); 
+    
+    router
+      .route('/api/logout')
+      .delete(UserController.logout);
   }
 }

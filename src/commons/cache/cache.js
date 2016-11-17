@@ -19,13 +19,16 @@ module.exports = class CacheManager {
             let data = cache.get(key) || [];
 
             if (_.isArray(data)) {
-                if (!_.isUndefined(data[0])) {
-                    let index = data[0].findIndex(x =>
-                        x._id == id);
+                if (!_.isUndefined(data[ 0 ])) {
+                    let index = _.isNull(id) ? -1
+                            : data[ 0 ].findIndex(x =>
+                                                    x._id == id);
 
                     if (index > - 1)
-                        data[0][index] = dataSet;
-                } else { 
+                        data[ 0 ].splice(index, 1);
+                        
+                    data[ 0 ].push(dataSet)
+                } else {
                     data.push(dataSet);
                 }
                 cache.put(key, data);
@@ -55,9 +58,9 @@ module.exports = class CacheManager {
             let data = cache.get(key);
 
             if (_.isArray(data) && data.length > 0) {
-                let index = data[0].findIndex(x => x._id == id);
+                let index = data[ 0 ].findIndex(x => x._id == id);
 
-                data[0].splice(index, 1);
+                data[ 0 ].splice(index, 1);
                 cache.put(key, data);
 
                 return resolve(true)

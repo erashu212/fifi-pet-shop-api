@@ -34,7 +34,7 @@ module.exports = class ProductController {
                         status: !!products,
                         data: {
                             totalItems: productLength,
-                            products: products.slice(start, end)
+                            products: products.slice(start, start + end)
                         },
                         message: ''
                     })
@@ -105,8 +105,8 @@ module.exports = class ProductController {
         ProductDAO
             .updateProduct(req.params.id, req.body)
             .then(product => {
-                CacheManager.save('products', req.body, req.params.id);
-                socketEmitter.emit('product:updated', req.body);
+                CacheManager.save('products', product, req.params.id);
+                socketEmitter.emit('product:updated', product);
 
                 return res.status(200).json({
                     status: !!product,
