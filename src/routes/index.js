@@ -8,26 +8,28 @@ const UserRoutes = require('../api/user/route');
 const ProductRoutes = require('../api/product/route');
 
 module.exports = class Routes {
-  static init(app, router) {
+    static init(app, router) {
 
-      ProductRoutes.preInit();
-    
-      app.all('/api/users', AuthController.isAuthenticated);
-      
+        ProductRoutes.preInit();
 
-    /* middleware to avail product api to admin only */
-      app
-       .post('/api/products', AuthController.isAdmin)
-       .put('/api/products/:id', AuthController.isAdmin)
-       .delete('/api/products/:id', AuthController.isAdmin);
- 
-      UserRoutes.init(router);
-      ProductRoutes.init(router);
+        app
+            .put('/api/users', AuthController.isAuthenticated)
+            .delete('/api/users', AuthController.isAuthenticated);
 
-     router
-       .route('*')
-       .get(StaticDispatcher.sendIndex);
 
-     app.use('/', router);
-  }
+        /* middleware to avail product api to admin only */
+        app
+            .post('/api/products', AuthController.isAdmin)
+            .put('/api/products/:id', AuthController.isAdmin)
+            .delete('/api/products/:id', AuthController.isAdmin);
+
+        UserRoutes.init(router);
+        ProductRoutes.init(router);
+
+        router
+            .route('*')
+            .get(StaticDispatcher.sendIndex);
+
+        app.use('/', router);
+    }
 }

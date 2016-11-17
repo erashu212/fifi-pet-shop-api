@@ -14,7 +14,7 @@ const user = {
   },
   status: {
     type: Number,
-    default: 0
+    default: 1
   },
   isAdmin: {
     type: Boolean,
