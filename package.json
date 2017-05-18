@@ -18,7 +18,7 @@
     "url": "https://github.com/erashu212/fifi-pet-shop-api/issues"
   },
   "dependencies": {
-    "body-parser": "^1.15.2",
+    "body-parser": "^1.17.2",
     "cookie-parser": "^1.4.3",
     "cors": "^2.8.1",
     "errorhandler": "^1.4.3",
