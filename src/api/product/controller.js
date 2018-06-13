@@ -17,7 +17,7 @@ module.exports = class ProductController {
     }
 
     static getAll(req, res) {
-        let {start, end} = req.query;
+        let {start = 0, end = -1} = req.query;
 
         CacheManager.get('products')
             .then(products => {
