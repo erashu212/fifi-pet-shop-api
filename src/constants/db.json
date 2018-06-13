@@ -1,3 +1,4 @@
 {
-  "dev": "mongodb://admin:Enter#123@ds159400.mlab.com:59400/fifi-pet-shop"
+  "dev": "mongodb://admin:Enter#123@ds159400.mlab.com:59400/fifi-pet-shop",
+  "prod": "mongodb://admin:Enter#123@ds159400.mlab.com:59400/fifi-pet-shop"
 }
