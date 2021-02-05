@@ -25,7 +25,7 @@
     "express": "^4.14.0",
     "express-content-length-validator": "^1.0.0",
     "express-session": "^1.14.2",
-    "memory-cache": "^0.1.6",
+    "memory-cache": "^0.2.0",
     "mongoose": "^4.7.5",
     "morgan": "^1.7.0",
     "os": "^0.1.1",
